@@ -95,8 +95,9 @@ function isHtml() {
 function replaceText(editor, match) {
     var newText = match.replaceText;
     var pos = editor.getCursorPosition();
-    var line = editor.getSession().getLine(pos.row);
-    var doc = editor.getSession().getDocument();
+    var session = editor.getSession();
+    var line = session.getLine(pos.row);
+    var doc = session.getDocument();
     var prefix = completeUtil.retrievePreceedingIdentifier(line, pos.column, match.idRegex);
     
     if (match.replaceText === "require(^^)" && isJavaScript()) {
@@ -105,6 +106,8 @@ function replaceText(editor, match) {
             setTimeout(deferredInvoke, AUTO_OPEN_DELAY);
         isInvokeScheduled = true;
     }   
+    
+    newText = newText.replace(/\t/g, session.getTabString());
     
     // Ensure cursor marker
     if (newText.indexOf("^^") === -1)

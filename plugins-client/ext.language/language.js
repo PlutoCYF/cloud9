@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 
 var ext = require("core/ext");
 var ide = require("core/ide");
+var util = require("core/util");
 var code = require("ext/code/code");
 var editors = require("ext/editors/editors");
 var EditSession = require("ace/edit_session").EditSession;
@@ -78,7 +79,7 @@ module.exports = ext.register("ext/language/language", {
                     return;
                 ext.initExtension(_self);
 
-                var path = event.node.getAttribute("path");
+                var path = util.stripWSFromPath(event.node.getAttribute("path"));
                 var editor = editors.currentEditor.amlEditor;
                 // workaround for concorde firing changesession with empty document
                 var isVisible = editor.xmlRoot == event.node;
@@ -230,7 +231,7 @@ module.exports = ext.register("ext/language/language", {
         // Currently no code editor active
         if(!editors.currentEditor || editors.currentEditor.path != "ext/code/code" || !tabEditors.getPage() || !this.editor)
             return;
-        var currentPath = tabEditors.getPage().getAttribute("id");
+        var currentPath = util.stripWSFromPath(tabEditors.getPage().getAttribute("id"));
         this.worker.call("switchFile", [currentPath, editors.currentEditor.amlEditor.syntax, this.editor.getValue(), this.editor.getCursorPosition(), ide.workspaceDir]);
     },
     
